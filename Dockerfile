@@ -24,6 +24,7 @@ RUN mkdir /save \
 #
 WORKDIR /save
 
+ENV TERM=xterm
 CMD chgrp frotz /save \
   && chmod 775 /save \
   && sudo -u frotz /usr/bin/frotz /home/frotz/${STORY_DAT}
