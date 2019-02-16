@@ -1,9 +1,19 @@
-FROM clockworksoul/frotz
+FROM debian:stretch-slim
 
-MAINTAINER Matt Titmus <matthew.titmus@gmail.com>
+LABEL author="Matt Titmus <matthew.titmus@gmail.com>"
+LABEL maintainer="Brannon Dorsey <brannon@brannondorsey.com>"
 
 ENV STORY_ZIP zork1.zip
 ENV STORY_DAT DATA/ZORK1.DAT
+
+RUN apt-get update && \
+    apt-get install -y frotz sudo unzip && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -ms /bin/bash frotz
+
+USER frotz
+WORKDIR /home/frotz
 
 COPY ${STORY_ZIP} story.zip
 
@@ -23,8 +33,7 @@ RUN mkdir /save \
 # as the save directoy
 #
 WORKDIR /save
-
-ENV TERM=xterm
+ENV TERM=linux
 CMD chgrp frotz /save \
   && chmod 775 /save \
-  && sudo -u frotz /usr/bin/frotz /home/frotz/${STORY_DAT}
+  && sudo -u frotz /usr/games/frotz /home/frotz/${STORY_DAT} | tee /dev/null
